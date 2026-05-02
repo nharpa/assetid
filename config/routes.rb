@@ -16,7 +16,7 @@ Rails.application.routes.draw do
     resources :characteristic_allowed_values, only: [:create, :destroy]
   end
 
-  resources :assets do
+  resources :assets, path: "register" do
     member do
       get  :characteristic_values
       patch :characteristic_values, action: :update_characteristic_values
