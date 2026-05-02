@@ -1,0 +1,42 @@
+<% content_for :title, "Asset Classes – AssetID" %>
+
+<div class="page-header">
+  <h1 class="page-title">Asset Classes</h1>
+  <%= link_to "New Asset Class", new_asset_class_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <% if @asset_classes.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Characteristics</th>
+          <th>Assets</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @asset_classes.each do |ac| %>
+          <tr>
+            <td><%= link_to ac.name, asset_class_path(ac) %></td>
+            <td><%= ac.description %></td>
+            <td><%= ac.characteristics.count %></td>
+            <td><%= ac.assets.count %></td>
+            <td>
+              <div class="actions">
+                <%= link_to "Edit",   edit_asset_class_path(ac),  class: "btn btn-secondary btn-sm" %>
+                <%= button_to "Delete", asset_class_path(ac), method: :delete,
+                      data: { turbo_confirm: "Delete #{ac.name}?" },
+                      class: "btn btn-danger btn-sm" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">No asset classes yet. <%= link_to "Add one", new_asset_class_path %>.</div>
+  <% end %>
+</div>

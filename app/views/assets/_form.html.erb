@@ -1,0 +1,94 @@
+<% if asset.errors.any? %>
+  <div class="flash flash-alert">
+    <strong>Please fix the following errors:</strong>
+    <ul>
+      <% asset.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :asset_tag, "Asset Tag" %>
+    <%= f.text_field :asset_tag, autofocus: true %>
+  </div>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :asset_class_id, "Asset Class" %>
+    <%= f.select :asset_class_id,
+          @asset_classes.map { |ac| [ac.name, ac.id] },
+          { include_blank: "Select class…" } %>
+  </div>
+  <div class="form-group">
+    <%= f.label :location_id, "Location" %>
+    <%= f.select :location_id,
+          @locations.map { |l| [l.plant_name, l.id] },
+          { include_blank: "Select location…" } %>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :status %>
+    <%= f.select :status,
+          Asset::STATUSES.map { |s| [s.humanize, s] },
+          { include_blank: "Select status…" } %>
+  </div>
+  <div class="form-group">
+    <%= f.label :parent_asset_id, "Parent Asset (optional)" %>
+    <%= f.select :parent_asset_id,
+          @parent_assets.map { |a| ["#{a.asset_tag} – #{a.name}", a.id] },
+          { include_blank: "None (top-level)" } %>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :make, "Make (optional)" %>
+    <%= f.text_field :make %>
+  </div>
+  <div class="form-group">
+    <%= f.label :model, "Model (optional)" %>
+    <%= f.text_field :model %>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :serial_number, "Serial Number (optional)" %>
+    <%= f.text_field :serial_number %>
+  </div>
+  <div class="form-group">
+    <%= f.label :purchase_cost, "Purchase Cost (optional)" %>
+    <%= f.number_field :purchase_cost, step: "0.01", min: 0 %>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :purchase_date, "Purchase Date (optional)" %>
+    <%= f.date_field :purchase_date %>
+  </div>
+  <div class="form-group">
+    <%= f.label :installation_date, "Installation Date (optional)" %>
+    <%= f.date_field :installation_date %>
+  </div>
+</div>
+
+<div class="form-group">
+  <%= f.label :last_inspected_at, "Last Inspected (optional)" %>
+  <%= f.datetime_local_field :last_inspected_at %>
+</div>
+
+<div class="form-actions">
+  <%= f.submit asset.persisted? ? "Update Asset" : "Create Asset", class: "btn btn-primary" %>
+  <%= link_to "Cancel", asset.persisted? ? asset_path(asset) : assets_path, class: "btn btn-secondary" %>
+</div>

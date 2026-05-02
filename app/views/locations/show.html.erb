@@ -1,0 +1,55 @@
+<% content_for :title, "#{@location.plant_name} – AssetID" %>
+
+<div class="page-header">
+  <h1 class="page-title"><%= @location.plant_name %></h1>
+  <div class="actions">
+    <%= link_to "Edit",  edit_location_path(@location), class: "btn btn-secondary" %>
+    <%= link_to "Back",  locations_path,               class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-label">Address</div>
+        <div class="detail-value">
+          <%= @location.address_line_1 %><br>
+          <% if @location.address_line_2.present? %><%= @location.address_line_2 %><br><% end %>
+          <%= @location.suburb %><% if @location.state.present? %>, <%= @location.state %><% end %>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Notes</div>
+        <div class="detail-value"><%= @location.notes.presence || "—" %></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Assets at this Location (<%= @assets.count %>)</h2>
+    <%= link_to "New Asset", new_asset_path(location_id: @location.id), class: "btn btn-primary btn-sm" %>
+  </div>
+  <% if @assets.any? %>
+    <table>
+      <thead>
+        <tr><th>Tag</th><th>Name</th><th>Class</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        <% @assets.each do |asset| %>
+          <tr>
+            <td><%= link_to asset.asset_tag, asset_path(asset) %></td>
+            <td><%= asset.name %></td>
+            <td><%= asset.asset_class.name %></td>
+            <td><%= status_badge(asset.status) %></td>
+            <td><%= link_to "View", asset_path(asset), class: "btn btn-secondary btn-sm" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">No assets at this location.</div>
+  <% end %>
+</div>

@@ -1,0 +1,25 @@
+<% if asset_class.errors.any? %>
+  <div class="flash flash-alert">
+    <strong>Please fix the following errors:</strong>
+    <ul>
+      <% asset_class.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="form-group">
+  <%= f.label :name %>
+  <%= f.text_field :name, autofocus: true %>
+</div>
+
+<div class="form-group">
+  <%= f.label :description %>
+  <%= f.text_area :description %>
+</div>
+
+<div class="form-actions">
+  <%= f.submit asset_class.persisted? ? "Update Asset Class" : "Create Asset Class", class: "btn btn-primary" %>
+  <%= link_to "Cancel", asset_classes_path, class: "btn btn-secondary" %>
+</div>

@@ -1,0 +1,43 @@
+<% content_for :title, "Users – AssetID" %>
+
+<div class="page-header">
+  <h1 class="page-title">Users</h1>
+  <%= link_to "New User", new_user_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <% if @users.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><%= link_to user.name, user_path(user) %></td>
+            <td><%= user.email %></td>
+            <td><%= role_badge(user.role) %></td>
+            <td><%= user.created_at.strftime("%d %b %Y") %></td>
+            <td>
+              <div class="actions">
+                <%= link_to "Edit", edit_user_path(user), class: "btn btn-secondary btn-sm" %>
+                <%= button_to "Delete", user_path(user), method: :delete,
+                      data: { turbo_confirm: "Delete #{user.name}?" },
+                      class: "btn btn-danger btn-sm",
+                      disabled: user == current_user %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">No users found.</div>
+  <% end %>
+</div>

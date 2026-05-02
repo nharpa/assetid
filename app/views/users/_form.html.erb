@@ -1,0 +1,42 @@
+<% if user.errors.any? %>
+  <div class="flash flash-alert">
+    <strong>Please fix the following errors:</strong>
+    <ul>
+      <% user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, autofocus: true %>
+  </div>
+  <div class="form-group">
+    <%= f.label :email %>
+    <%= f.email_field :email %>
+  </div>
+</div>
+
+<div class="form-group">
+  <%= f.label :role %>
+  <%= f.select :role, User::ROLES.map { |r| [r.capitalize, r] }, { include_blank: "Select role..." } %>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :password, user.persisted? ? "New Password (leave blank to keep current)" : "Password" %>
+    <%= f.password_field :password, autocomplete: "new-password" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :password_confirmation, "Confirm Password" %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  </div>
+</div>
+
+<div class="form-actions">
+  <%= f.submit user.persisted? ? "Update User" : "Create User", class: "btn btn-primary" %>
+  <%= link_to "Cancel", users_path, class: "btn btn-secondary" %>
+</div>

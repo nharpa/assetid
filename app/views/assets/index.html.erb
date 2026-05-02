@@ -1,0 +1,85 @@
+<% content_for :title, "Assets – AssetID" %>
+
+<div class="page-header">
+  <h1 class="page-title">Assets</h1>
+  <%= link_to "New Asset", new_asset_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <%= form_with url: assets_path, method: :get, local: true do |f| %>
+    <div class="search-form">
+      <div class="form-group">
+        <%= f.label :q, "Search" %>
+        <%= f.text_field :q, value: params[:q], placeholder: "Tag or name…" %>
+      </div>
+      <div class="form-group">
+        <%= f.label :asset_class_id, "Class" %>
+        <%= f.select :asset_class_id,
+              @asset_classes.map { |ac| [ac.name, ac.id] },
+              { include_blank: "All classes" },
+              selected: params[:asset_class_id] %>
+      </div>
+      <div class="form-group">
+        <%= f.label :location_id, "Location" %>
+        <%= f.select :location_id,
+              @locations.map { |l| [l.plant_name, l.id] },
+              { include_blank: "All locations" },
+              selected: params[:location_id] %>
+      </div>
+      <div class="form-group">
+        <%= f.label :status, "Status" %>
+        <%= f.select :status,
+              Asset::STATUSES.map { |s| [s.humanize, s] },
+              { include_blank: "All statuses" },
+              selected: params[:status] %>
+      </div>
+      <%= f.submit "Filter", class: "btn btn-primary", style: "margin-top: 1.5rem" %>
+      <%= link_to "Clear", assets_path, class: "btn btn-secondary", style: "margin-top: 1.5rem" %>
+    </div>
+  <% end %>
+
+  <% if @assets.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Tag</th>
+          <th>Name</th>
+          <th>Class</th>
+          <th>Location</th>
+          <th>Parent</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @assets.each do |asset| %>
+          <tr>
+            <td><%= link_to asset.asset_tag, asset_path(asset) %></td>
+            <td><%= asset.name %></td>
+            <td><%= asset.asset_class.name %></td>
+            <td><%= asset.location.plant_name %></td>
+            <td>
+              <% if asset.parent_asset %>
+                <%= link_to asset.parent_asset.asset_tag, asset_path(asset.parent_asset) %>
+              <% else %>
+                <span style="color: var(--text-muted)">—</span>
+              <% end %>
+            </td>
+            <td><%= status_badge(asset.status) %></td>
+            <td>
+              <div class="actions">
+                <%= link_to "View",   asset_path(asset),       class: "btn btn-secondary btn-sm" %>
+                <%= link_to "Edit",   edit_asset_path(asset),  class: "btn btn-secondary btn-sm" %>
+                <%= button_to "Delete", asset_path(asset), method: :delete,
+                      data: { turbo_confirm: "Delete #{asset.asset_tag}?" },
+                      class: "btn btn-danger btn-sm" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">No assets match your search.</div>
+  <% end %>
+</div>

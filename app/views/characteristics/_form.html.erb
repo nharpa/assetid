@@ -1,0 +1,41 @@
+<% if characteristic.errors.any? %>
+  <div class="flash flash-alert">
+    <strong>Please fix the following errors:</strong>
+    <ul>
+      <% characteristic.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, autofocus: true %>
+  </div>
+  <div class="form-group">
+    <%= f.label :data_type, "Data Type" %>
+    <%= f.select :data_type,
+          Characteristic::DATA_TYPES.map { |t| [t.capitalize, t] },
+          { include_blank: "Select type..." } %>
+    <p class="form-hint">Use <strong>enum</strong> to restrict to a fixed set of values.</p>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= f.label :unit, "Unit (optional)" %>
+    <%= f.text_field :unit, placeholder: "e.g. L/s, V, kg" %>
+  </div>
+</div>
+
+<div class="form-group">
+  <%= f.label :description %>
+  <%= f.text_area :description %>
+</div>
+
+<div class="form-actions">
+  <%= f.submit characteristic.persisted? ? "Update Characteristic" : "Create Characteristic", class: "btn btn-primary" %>
+  <%= link_to "Cancel", characteristics_path, class: "btn btn-secondary" %>
+</div>

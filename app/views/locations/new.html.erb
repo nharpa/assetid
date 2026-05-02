@@ -1,0 +1,11 @@
+<% content_for :title, "New Location – AssetID" %>
+<div class="page-header">
+  <h1 class="page-title">New Location</h1>
+</div>
+<div class="card">
+  <div class="card-body">
+    <%= form_with model: @location do |f| %>
+      <%= render "form", f: f, location: @location %>
+    <% end %>
+  </div>
+</div>

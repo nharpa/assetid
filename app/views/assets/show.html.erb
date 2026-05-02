@@ -1,0 +1,176 @@
+<% content_for :title, "#{@asset.asset_tag} – AssetID" %>
+
+<%# Breadcrumb: ancestor chain %>
+<div class="breadcrumb">
+  <%= link_to "Assets", assets_path %>
+  <span class="breadcrumb-sep">›</span>
+  <% @ancestors.each do |ancestor| %>
+    <%= link_to ancestor.asset_tag, asset_path(ancestor) %>
+    <span class="breadcrumb-sep">›</span>
+  <% end %>
+  <span><%= @asset.asset_tag %></span>
+</div>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">
+      <%= @asset.asset_tag %>
+      <%= status_badge(@asset.status) %>
+    </h1>
+    <div style="color: var(--text-muted); margin-top: 0.25rem;"><%= @asset.name %></div>
+  </div>
+  <div class="actions">
+    <%= link_to "Edit Characteristics", characteristic_values_asset_path(@asset), class: "btn btn-secondary" %>
+    <%= link_to "Edit",                 edit_asset_path(@asset),                  class: "btn btn-secondary" %>
+    <%= link_to "Back",                 assets_path,                              class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<%# ── Asset Details ── %>
+<div class="card">
+  <div class="card-header"><h2>Asset Details</h2></div>
+  <div class="card-body">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-label">Asset Tag</div>
+        <div class="detail-value"><strong><%= @asset.asset_tag %></strong></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Name</div>
+        <div class="detail-value"><%= @asset.name %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Asset Class</div>
+        <div class="detail-value"><%= link_to @asset.asset_class.name, asset_class_path(@asset.asset_class) %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Location</div>
+        <div class="detail-value"><%= link_to @asset.location.plant_name, location_path(@asset.location) %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Status</div>
+        <div class="detail-value"><%= status_badge(@asset.status) %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Parent Asset</div>
+        <div class="detail-value">
+          <% if @asset.parent_asset %>
+            <%= link_to @asset.parent_asset.display_name, asset_path(@asset.parent_asset) %>
+          <% else %>
+            <span style="color: var(--text-muted)">None (top-level)</span>
+          <% end %>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Make</div>
+        <div class="detail-value"><%= @asset.make.presence || "—" %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Model</div>
+        <div class="detail-value"><%= @asset.model.presence || "—" %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Serial Number</div>
+        <div class="detail-value"><%= @asset.serial_number.presence || "—" %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Purchase Date</div>
+        <div class="detail-value"><%= @asset.purchase_date&.strftime("%d %b %Y") || "—" %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Purchase Cost</div>
+        <div class="detail-value"><%= @asset.purchase_cost ? number_to_currency(@asset.purchase_cost) : "—" %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Installation Date</div>
+        <div class="detail-value"><%= @asset.installation_date&.strftime("%d %b %Y") || "—" %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Last Inspected</div>
+        <div class="detail-value"><%= @asset.last_inspected_at&.strftime("%d %b %Y %H:%M") || "—" %></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# ── Hierarchy Tree ── %>
+<div class="card">
+  <div class="card-header">
+    <h2>Asset Hierarchy</h2>
+    <span style="font-size:0.8rem; color: var(--text-muted);">
+      <%= link_to @root.asset_tag, asset_path(@root) %> tree &middot; current asset highlighted
+    </span>
+  </div>
+  <div class="card-body">
+    <ul class="tree">
+      <%= render partial: "assets/asset_tree",
+                 locals: { asset: @root, current_id: @asset.id, tree_assets: @tree_assets } %>
+    </ul>
+  </div>
+</div>
+
+<%# ── Characteristic Values ── %>
+<% if @accs.any? %>
+  <div class="card">
+    <div class="card-header">
+      <h2>Characteristic Values</h2>
+      <%= link_to "Edit Values", characteristic_values_asset_path(@asset), class: "btn btn-primary btn-sm" %>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Characteristic</th>
+          <th>Value</th>
+          <th>Unit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @accs.each do |acc| %>
+          <% acv = @acvs.find { |v| v.asset_class_characteristic_id == acc.id } %>
+          <tr>
+            <td>
+              <%= acc.characteristic.name %>
+              <% if acc.required? %><span style="color: var(--danger)">*</span><% end %>
+            </td>
+            <td>
+              <% if acv %>
+                <%= acv.value %>
+              <% else %>
+                <span style="color: var(--text-muted)">Not recorded</span>
+              <% end %>
+            </td>
+            <td><%= acc.characteristic.unit.presence || "—" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<%# ── Child Assets ── %>
+<div class="card">
+  <div class="card-header">
+    <h2>Direct Children (<%= @child_assets.count %>)</h2>
+    <%= link_to "Add Child Asset", new_asset_path(parent_asset_id: @asset.id), class: "btn btn-primary btn-sm" %>
+  </div>
+  <% if @child_assets.any? %>
+    <table>
+      <thead>
+        <tr><th>Tag</th><th>Name</th><th>Class</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        <% @child_assets.each do |child| %>
+          <tr>
+            <td><%= link_to child.asset_tag, asset_path(child) %></td>
+            <td><%= child.name %></td>
+            <td><%= child.asset_class.name %></td>
+            <td><%= status_badge(child.status) %></td>
+            <td><%= link_to "View", asset_path(child), class: "btn btn-secondary btn-sm" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">No child assets.</div>
+  <% end %>
+</div>

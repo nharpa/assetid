@@ -1,0 +1,20 @@
+<li>
+  <div class="tree-node <%= 'current-asset' if asset.id == current_id %>">
+    <span class="tree-cls"><%= asset.asset_class.name %></span>
+    <% if asset.id == current_id %>
+      <strong class="tree-tag"><%= asset.asset_tag %></strong>
+    <% else %>
+      <%= link_to asset.asset_tag, asset_path(asset), class: "tree-tag" %>
+    <% end %>
+    <span class="tree-name"><%= asset.name %></span>
+    <%= status_badge(asset.status) %>
+  </div>
+  <% children = tree_assets.values.select { |a| a.parent_asset_id == asset.id }.sort_by(&:asset_tag) %>
+  <% if children.any? %>
+    <ul>
+      <% children.each do |child| %>
+        <%= render partial: "assets/asset_tree", locals: { asset: child, current_id: current_id, tree_assets: tree_assets } %>
+      <% end %>
+    </ul>
+  <% end %>
+</li>

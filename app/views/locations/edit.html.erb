@@ -1,0 +1,12 @@
+<% content_for :title, "Edit #{@location.plant_name} – AssetID" %>
+<div class="page-header">
+  <h1 class="page-title">Edit Location</h1>
+  <%= link_to "Cancel", @location, class: "btn btn-secondary" %>
+</div>
+<div class="card">
+  <div class="card-body">
+    <%= form_with model: @location do |f| %>
+      <%= render "form", f: f, location: @location %>
+    <% end %>
+  </div>
+</div>

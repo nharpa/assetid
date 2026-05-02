@@ -1,0 +1,42 @@
+<% content_for :title, "Characteristics – AssetID" %>
+
+<div class="page-header">
+  <h1 class="page-title">Characteristics</h1>
+  <%= link_to "New Characteristic", new_characteristic_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <% if @characteristics.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Data Type</th>
+          <th>Unit</th>
+          <th>Used by Classes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @characteristics.each do |c| %>
+          <tr>
+            <td><%= link_to c.name, characteristic_path(c) %></td>
+            <td><%= data_type_badge(c.data_type) %></td>
+            <td><%= c.unit.presence || "—" %></td>
+            <td><%= c.asset_classes.count %></td>
+            <td>
+              <div class="actions">
+                <%= link_to "Edit",   edit_characteristic_path(c),  class: "btn btn-secondary btn-sm" %>
+                <%= button_to "Delete", characteristic_path(c), method: :delete,
+                      data: { turbo_confirm: "Delete #{c.name}?" },
+                      class: "btn btn-danger btn-sm" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">No characteristics yet. <%= link_to "Add one", new_characteristic_path %>.</div>
+  <% end %>
+</div>

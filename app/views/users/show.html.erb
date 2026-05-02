@@ -1,0 +1,32 @@
+<% content_for :title, "#{@user.name} – AssetID" %>
+
+<div class="page-header">
+  <h1 class="page-title"><%= @user.name %></h1>
+  <div class="actions">
+    <%= link_to "Edit", edit_user_path(@user), class: "btn btn-secondary" %>
+    <%= link_to "Back", users_path, class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-label">Name</div>
+        <div class="detail-value"><%= @user.name %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Email</div>
+        <div class="detail-value"><%= @user.email %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Role</div>
+        <div class="detail-value"><%= role_badge(@user.role) %></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Member Since</div>
+        <div class="detail-value"><%= @user.created_at.strftime("%d %B %Y") %></div>
+      </div>
+    </div>
+  </div>
+</div>
