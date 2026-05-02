@@ -1,5 +1,5 @@
 class AssetsController < ApplicationController
-  before_action :set_asset, only: [:show, :edit, :update, :destroy, :characteristic_values, :update_characteristic_values]
+  before_action :set_asset, only: [ :show, :edit, :update, :destroy, :characteristic_values, :update_characteristic_values ]
 
   def index
     @assets = Asset.includes(:asset_class, :location, :parent_asset).all

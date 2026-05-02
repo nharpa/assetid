@@ -1,5 +1,5 @@
 class AssetClassesController < ApplicationController
-  before_action :set_asset_class, only: [:show, :edit, :update, :destroy]
+  before_action :set_asset_class, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @asset_classes = AssetClass.order(:name)

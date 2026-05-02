@@ -16,7 +16,7 @@ class Asset < ApplicationRecord
   def ancestor_chain
     chain = []
     current = parent_asset
-    visited = Set.new([id])
+    visited = Set.new([ id ])
     while current && !visited.include?(current.id)
       chain.unshift(current)
       visited.add(current.id)
@@ -27,7 +27,7 @@ class Asset < ApplicationRecord
 
   def root_ancestor
     node = self
-    visited = Set.new([id])
+    visited = Set.new([ id ])
     while node.parent_asset && !visited.include?(node.parent_asset.id)
       visited.add(node.parent_asset.id)
       node = node.parent_asset

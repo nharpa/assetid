@@ -1,5 +1,5 @@
 class CharacteristicsController < ApplicationController
-  before_action :set_characteristic, only: [:show, :edit, :update, :destroy]
+  before_action :set_characteristic, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @characteristics = Characteristic.order(:name)
