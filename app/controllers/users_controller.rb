@@ -47,13 +47,16 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :role)
+    permitted = params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    permitted[:role] = params.dig(:user, :role) if User::ROLES.include?(params.dig(:user, :role))
+    permitted
   end
 
   def user_params_for_update
-    p = params.require(:user).permit(:name, :email, :password, :password_confirmation, :role)
-    p.delete(:password) if p[:password].blank?
-    p.delete(:password_confirmation) if p[:password].blank?
-    p
+    permitted = params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    permitted[:role] = params.dig(:user, :role) if User::ROLES.include?(params.dig(:user, :role))
+    permitted.delete(:password) if permitted[:password].blank?
+    permitted.delete(:password_confirmation) if permitted[:password].blank?
+    permitted
   end
 end

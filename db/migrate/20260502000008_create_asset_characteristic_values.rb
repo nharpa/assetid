@@ -6,6 +6,6 @@ class CreateAssetCharacteristicValues < ActiveRecord::Migration[8.1]
       t.string :value, null: false
       t.timestamps
     end
-    add_index :asset_characteristic_values, [:asset_id, :asset_class_characteristic_id], unique: true, name: "index_acv_on_asset_and_acc"
+    add_index :asset_characteristic_values, [ :asset_id, :asset_class_characteristic_id ], unique: true, name: "index_acv_on_asset_and_acc"
   end
 end

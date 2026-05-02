@@ -7,6 +7,6 @@ class CreateAssetClassCharacteristics < ActiveRecord::Migration[8.1]
       t.integer :display_order, null: false, default: 0
       t.timestamps
     end
-    add_index :asset_class_characteristics, [:asset_class_id, :characteristic_id], unique: true, name: "index_acc_on_asset_class_and_characteristic"
+    add_index :asset_class_characteristics, [ :asset_class_id, :characteristic_id ], unique: true, name: "index_acc_on_asset_class_and_characteristic"
   end
 end

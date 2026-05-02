@@ -9,11 +9,11 @@ Rails.application.routes.draw do
   resources :locations
 
   resources :asset_classes do
-    resources :asset_class_characteristics, only: [:create, :destroy]
+    resources :asset_class_characteristics, only: [ :create, :destroy ]
   end
 
   resources :characteristics do
-    resources :characteristic_allowed_values, only: [:create, :destroy]
+    resources :characteristic_allowed_values, only: [ :create, :destroy ]
   end
 
   resources :assets, path: "register" do
