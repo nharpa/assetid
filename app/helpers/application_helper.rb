@@ -1,3 +1,5 @@
+# View helpers available globally across all controllers and views.
+# Provides badge rendering for status, user role, and characteristic data type.
 module ApplicationHelper
   def status_badge(status)
     content_tag :span, status&.humanize, class: "badge badge-#{status}"

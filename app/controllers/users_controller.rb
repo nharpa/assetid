@@ -56,6 +56,8 @@ class UsersController < ApplicationController
     permitted
   end
 
+  # Same role-assignment guard as user_params. Password fields are stripped when
+  # blank so users can be updated without re-entering a password.
   def user_params_for_update
     permitted = params.require(:user).permit(:name, :email, :password, :password_confirmation)
     permitted[:role] = params.dig(:user, :role) if User::ROLES.include?(params.dig(:user, :role))
