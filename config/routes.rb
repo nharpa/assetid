@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     resources :characteristic_allowed_values, only: [ :create, :destroy ]
   end
 
+  # path: "register" avoids a collision with Propshaft's /assets/ middleware,
+  # which intercepts any request to /assets/* before it reaches the Rails router.
   resources :assets, path: "register" do
     member do
       get  :characteristic_values

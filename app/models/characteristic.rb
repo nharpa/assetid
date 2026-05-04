@@ -1,3 +1,7 @@
+# Defines a typed attribute that can be assigned to an AssetClass
+# (e.g. Manufacturer, Capacity, Condition).
+# Supported data types: string, integer, decimal, boolean, date, enum.
+# Enum characteristics require CharacteristicAllowedValues to constrain valid inputs.
 class Characteristic < ApplicationRecord
   DATA_TYPES = %w[string integer decimal boolean date enum].freeze
 

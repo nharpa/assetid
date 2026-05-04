@@ -1,3 +1,9 @@
+# Represents a physical infrastructure asset (e.g. a pump, valve, or tank).
+# Assets exist in a recursive parent-child hierarchy:
+#   Plant > Treatment Module > Building > Area > Equipment
+# The self-join on parent_asset_id enables this tree structure.
+# Characteristic values are stored via AssetCharacteristicValue,
+# scoped through AssetClassCharacteristic for type safety.
 class Asset < ApplicationRecord
   STATUSES = %w[active inactive planned under_maintenance decommissioned].freeze
 
@@ -13,6 +19,8 @@ class Asset < ApplicationRecord
   validates :location, presence: true
   validates :status, presence: true, inclusion: { in: STATUSES }
 
+  # Returns an ordered array of ancestors from root down to the immediate parent.
+  # Uses a visited Set to guard against circular parent references in corrupted data.
   def ancestor_chain
     chain = []
     current = parent_asset
@@ -25,6 +33,8 @@ class Asset < ApplicationRecord
     chain
   end
 
+  # Traverses the parent chain to return the top-level ancestor (an asset with no parent).
+  # Uses a visited Set to guard against circular references.
   def root_ancestor
     node = self
     visited = Set.new([ id ])
@@ -35,6 +45,8 @@ class Asset < ApplicationRecord
     node
   end
 
+  # Overrides Rails' default URL parameter (numeric id) to use asset_tag instead,
+  # producing URLs like /register/HV-PUMP-001 across all route helpers.
   def to_param
     asset_tag
   end

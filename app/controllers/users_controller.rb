@@ -1,3 +1,4 @@
+# Manages user accounts. All actions are restricted to admin users via require_admin.
 class UsersController < ApplicationController
   before_action :require_admin
   before_action :set_user, only: [ :show, :edit, :update, :destroy ]
@@ -46,6 +47,9 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  # Role is assigned via params.dig rather than permit to avoid a Brakeman mass
+  # assignment warning on a sensitive field. The value is validated against
+  # User::ROLES before being merged, preventing arbitrary role escalation.
   def user_params
     permitted = params.require(:user).permit(:name, :email, :password, :password_confirmation)
     permitted[:role] = params.dig(:user, :role) if User::ROLES.include?(params.dig(:user, :role))

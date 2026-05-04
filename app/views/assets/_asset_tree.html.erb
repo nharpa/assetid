@@ -1,3 +1,11 @@
+<%#
+  Partial: assets/_asset_tree
+  Renders a single node in the asset hierarchy tree, then recursively renders
+  its children. Receives a pre-loaded tree_assets hash (keyed by id) to avoid
+  N+1 queries. The current asset is highlighted via the current-asset CSS class.
+  Called recursively from itself for each level of the hierarchy.
+  Locals: asset (Asset), current_id (Integer), tree_assets (Hash{id => Asset})
+%>
 <li>
   <div class="tree-node <%= 'current-asset' if asset.id == current_id %>">
     <span class="tree-cls"><%= asset.asset_class.name %></span>

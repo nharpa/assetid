@@ -1,3 +1,7 @@
+# Manages infrastructure assets — the core resource of the application.
+# Handles standard CRUD plus characteristic value bulk editing and
+# hierarchy tree rendering for the show page.
+# Assets are located via asset_tag (not numeric id) in all URLs.
 class AssetsController < ApplicationController
   before_action :set_asset, only: [ :show, :edit, :update, :destroy, :characteristic_values, :update_characteristic_values ]
 
@@ -23,7 +27,8 @@ class AssetsController < ApplicationController
     @acvs = @asset.asset_characteristic_values.includes(asset_class_characteristic: :characteristic)
     @accs = @asset.asset_class.asset_class_characteristics.includes(:characteristic).order(:display_order)
 
-    # Hierarchy tree: load all assets at the same location for the full tree
+    # Tree pre-loading: all assets at the root's location are fetched in a single
+    # query and indexed by id, avoiding N+1 queries during recursive tree rendering.
     @root = @asset.root_ancestor
     @tree_assets = Asset.includes(:asset_class)
                         .where(location_id: @root.location_id)
@@ -68,6 +73,9 @@ class AssetsController < ApplicationController
     @acv_map = @asset.asset_characteristic_values.index_by(&:asset_class_characteristic_id)
   end
 
+  # Upserts characteristic values submitted from the bulk edit form.
+  # find_or_initialize_by creates a new record or loads the existing one.
+  # Blank submissions delete the existing value rather than saving an empty string.
   def update_characteristic_values
     (params[:values] || {}).each do |acc_id, val|
       acc = AssetClassCharacteristic.find_by(id: acc_id)
@@ -86,10 +94,14 @@ class AssetsController < ApplicationController
 
   private
 
+  # Looks up assets by asset_tag rather than numeric id to support
+  # human-readable URLs (e.g. /register/HV-PUMP-001).
   def set_asset
     @asset = Asset.find_by!(asset_tag: params[:id])
   end
 
+  # Excludes the current asset from parent_asset options to prevent
+  # an asset being assigned as its own parent.
   def load_form_data
     @asset_classes = AssetClass.order(:name)
     @locations = Location.order(:plant_name)

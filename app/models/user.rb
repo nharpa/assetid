@@ -1,3 +1,6 @@
+# Represents an authenticated user of the AssetID system.
+# Roles: admin (full system access) and staff (standard access).
+# Authentication is handled via has_secure_password (bcrypt).
 class User < ApplicationRecord
   has_secure_password
 
